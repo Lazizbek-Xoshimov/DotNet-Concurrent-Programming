@@ -6,38 +6,28 @@ public class Program
 
     public static void Main(string[] args)
     {
-        Thread threadFirst = new Thread(WriteToFile);
-        Thread threadSecond = new Thread(WriteToFile);
-        Thread threadThird = new Thread(WriteToFile);
-        Thread threadFourth = new Thread(WriteToFile);
-        Thread threadFifth = new Thread(WriteToFile);
-        Thread threadSixth = new Thread(WriteToFile);
-        Thread threadSeventh = new Thread(WriteToFile);
-        Thread threadEighth = new Thread(WriteToFile);
-        Thread threadNinth = new Thread(WriteToFile);
-        Thread threadTenth = new Thread(WriteToFile);
+        List<Thread> threads = new List<Thread>();
 
-        threadFirst.Start();
-        threadSecond.Start();
-        threadThird.Start();
-        threadFourth.Start();
-        threadFifth.Start();
-        threadSixth.Start();
-        threadSeventh.Start();
-        threadEighth.Start();
-        threadNinth.Start();
-        threadTenth.Start();
+        for (int i = 0; i < 10; i ++)
+            threads.Add(new Thread(WriteToFile) { Name = $"Thread {i}" });
+
+        foreach (Thread thread in threads)
+        {
+            thread.Start();
+            thread.Join();
+        }
     }
 
     public static void WriteToFile()
-    {
+    {   
         lock (fileLock)
         {
             using StreamWriter writer = new StreamWriter("message.txt", append: true);
-
-            for (int i = 0; i < 100; i ++)
+            writer.Write(Thread.CurrentThread.Name + ": ");
+            for (int i = 0; i < 100; i++)
+            {
                 writer.Write(i + " ");
-            
+            }
             writer.WriteLine();
         }
     }
