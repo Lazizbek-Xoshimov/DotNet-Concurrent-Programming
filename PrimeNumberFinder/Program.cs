@@ -4,63 +4,73 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        Thread threadFirst = new Thread(FirstRange);
-        Thread threadSecond = new Thread(SecondRange);
-        Thread threadThird = new Thread(ThirdRange);
-        Thread threadFourth = new Thread(FourthRange);
+        List<Thread> threads = new List<Thread>();
 
-        threadFirst.Start();
-        threadFirst.Join();
-
-        threadSecond.Start();
-        threadSecond.Join();
-
-        threadThird.Start();
-        threadThird.Join();
-
-        threadFourth.Start();
-        threadFourth.Join();
-    }
-
-    public static void FirstRange()
-    {
-        foreach (int number in PrimeNumbers(1, 25000))
-            Console.Write(number + " ");    
-    }
-
-    public static void SecondRange()
-    {
-        foreach (int number in PrimeNumbers(25000, 50000))
-            Console.Write(number + " "); 
-    }
-
-    public static void ThirdRange()
-    {
-        foreach (int number in PrimeNumbers(50000, 75000))
-            Console.Write(number + " "); 
-    }
-
-    public static void FourthRange()
-    {
-        foreach (int number in PrimeNumbers(75000, 100000))
-            Console.Write(number + " "); 
-    }
-
-    public static List<int> PrimeNumbers(int first, int last)
-    {
-        List<int> numbers = new List<int>();
-
-        for (int i = first; i < last; i++)
+        threads.Add(new Thread(() =>
         {
-            int count = 0;
+            Console.Write(Thread.CurrentThread.Name + ": ");
+            foreach (long number in PrimeNumbers(1, 20_000))
+                Console.Write(number + " ");
+            Console.WriteLine();
+        }) { Name = "Thread 1" });
 
-            for (int j = first; j < i; j++)
+        threads.Add(new Thread(() =>
+        {
+            Console.Write(Thread.CurrentThread.Name + ": ");
+            foreach (long number in PrimeNumbers(20_000, 40_000))
+                Console.Write(number + " ");
+            Console.WriteLine();
+        }) { Name = "Thread 2" });
+
+        threads.Add(new Thread(() =>
+        {
+            Console.Write(Thread.CurrentThread.Name + ": ");
+            foreach (long number in PrimeNumbers(40_000, 60_000))
+                Console.Write(number + " ");
+            Console.WriteLine();
+        }) { Name = "Thread 3" });
+
+        threads.Add(new Thread(() =>
+        {
+            Console.Write(Thread.CurrentThread.Name + ": ");
+            foreach (long number in PrimeNumbers(60_000, 80_000))
+                Console.Write(number + " ");
+            Console.WriteLine();
+        }) { Name = "Thread 4" });
+
+        threads.Add(new Thread(() =>
+        {
+            Console.Write(Thread.CurrentThread.Name + ": ");
+            foreach (long number in PrimeNumbers(80_000, 100_000))
+                Console.Write(number + " ");
+            Console.WriteLine();
+        }) { Name = "Thread 5" });
+
+        foreach (Thread thread in threads)
+        {
+            thread.Start();
+            thread.Join();
+        }
+    }
+
+    public static List<long> PrimeNumbers(long first, long last)
+    {
+        List<long> numbers = new List<long>();
+
+        for (long i = Math.Max(first, 2); i < last; i++)
+        {
+            bool isPrime = true;
+
+            for (long j = 2; j < i; j++)
             {
                 if (i % j == 0)
-                    count ++;
+                {
+                    isPrime = false;
+                    break;
+                }
             }
 
-            if (count == 1)
+            if (isPrime)
                 numbers.Add(i);
         }
 
