@@ -4,20 +4,24 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        Thread threadA = new Thread(DisplayNumbers);
-        Thread threadB = new Thread(DisplayNumbers);
-        Thread threadC = new Thread(DisplayNumbers);
+        List<Thread> threads = new List<Thread>();
 
-        threadA.Start();
-        threadB.Start();
-        threadC.Start();
+        threads.Add(new Thread(DisplayNumbers));
+        threads.Add(new Thread(DisplayNumbers));
+        threads.Add(new Thread(DisplayNumbers));
+
+        foreach (Thread thread in threads)
+        {
+            thread.Start();
+        }
     }
 
     public static void DisplayNumbers()
     {
         for (int i = 1; i <= 100; i ++)
+        {
             Console.Write(i + " ");
-
-        Thread.Sleep(2000);
+            Thread.Sleep(1000);
+        }
     }
 }
