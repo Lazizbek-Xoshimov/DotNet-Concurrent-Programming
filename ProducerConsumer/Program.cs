@@ -3,35 +3,49 @@
 public class Program
 {
     private static List<int> numbers = new List<int>();
+    public static object numbersLock = new object();
 
     public static void Main(string[] args)
     {
-        Thread Producer = new Thread(AddNumbers);
-        Thread Consumer = new Thread(RemoveAndPrintNumbers);
+        Thread Producer = new Thread(AddNumbers) { Name = "Producer thread" };
+        Thread Consumer = new Thread(RemoveAndPrintNumbers) { Name = "Consumer thread" };
 
         Producer.Start();
         Producer.Join();
         
         Consumer.Start();
+        Consumer.Join();
     }
 
     public static void AddNumbers()
     {
-        lock (numbers)
+        lock (numbersLock)
         {
-            for (int i = 0; i < 10; i ++)
-                numbers.Add(i);
+            Console.Write(Thread.CurrentThread.Name + ": ");
+
+            for (int i = 0; i < 10; i++)
+            {
+                numbers.Add(i * 10);
+                Console.Write(numbers[i] + " ");
+            }
+
+            Console.WriteLine();
         }
     }
 
     public static void RemoveAndPrintNumbers()
     {
-        lock (numbers)
+        lock (numbersLock)
         {
-            foreach (int number in numbers)
-                Console.Write(number + " ");
+            Console.Write(Thread.CurrentThread.Name + ": ");
 
-            numbers.Clear();
+            while (numbers.Count > 0)
+            {
+                Console.Write(numbers.First() + " ");
+                numbers.Remove(numbers.First());
+            }
+
+            Console.WriteLine();
         }
     }
 }
