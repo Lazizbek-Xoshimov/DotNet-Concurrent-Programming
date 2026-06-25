@@ -7,27 +7,30 @@ public class Program
 
     public static void Main(string[] args)
     {
-        Thread threadFirst = new Thread(Withdraw);
-        Thread threadSecond = new Thread(Withdraw);
-        Thread threadThird = new Thread(Withdraw);
-        Thread threadFourth = new Thread(Withdraw);
-        Thread threadFifth = new Thread(Withdraw);
+        List<Thread> threads = new List<Thread>();
 
-        threadFirst.Start();
-        threadSecond.Start();
-        threadThird.Start();
-        threadFourth.Start();
-        threadFifth.Start();
+        for (int i = 0; i < 5; i ++)
+            threads.Add(new Thread(Withdraw)
+            {
+                Name = $"Thread {i}"
+            });
+
+        foreach (Thread thread in threads)
+        {
+            thread.Start();
+            thread.Join();
+        }
 
         Console.WriteLine($"Current balance: {balance}");
+        Console.ReadKey();
     }
 
     public static void Withdraw()
     {
         lock (balanceLock)
         {
-            if (balance > 0)
-                balance -= 100;
+            balance -= 100;
+            Console.WriteLine($"{Thread.CurrentThread.Name}: {balance}");
         }
     }
 }
